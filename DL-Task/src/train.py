@@ -3,8 +3,10 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
+from torchvision.models import resnet34
 from dataset import ImageDataset
 from model import ImprovedCNN
+from complex_cnn import ComplexCNN
 import matplotlib.pyplot as plt
 
 # Define paths
@@ -15,7 +17,7 @@ plots_dir = os.path.join(results_dir, 'plots')
 os.makedirs(checkpoint_dir, exist_ok=True)
 os.makedirs(plots_dir, exist_ok=True)
 
-def train_model(data_dir, txt_files, batch_size=32, num_epochs=25, learning_rate=0.001):
+def train_model(data_dir, txt_files, batch_size=32, num_epochs=25, learning_rate=0.001, model_type='ComplexCNN'):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print("Start Training...")
 
@@ -26,7 +28,18 @@ def train_model(data_dir, txt_files, batch_size=32, num_epochs=25, learning_rate
     train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
 
-    model = ImprovedCNN(num_classes=50).to(device)
+    # Initialize model based on the model_type
+    if model_type == 'ImprovedCNN':     # task 1 model
+        model = ImprovedCNN(num_classes=50).to(device)
+    elif model_type == 'ComplexCNN':    # task 2 model
+        model = ComplexCNN(num_classes=50).to(device)
+    elif model_type == 'ResNet34':
+        model = resnet34(pretrained=False)
+        model.fc = nn.Linear(model.fc.in_features, 50)  # 修改最後的全連接層，適應50個分類
+        model = model.to(device)
+    else:
+        raise ValueError(f"Unknown model type: {model_type}")
+
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
@@ -87,7 +100,7 @@ def train_model(data_dir, txt_files, batch_size=32, num_epochs=25, learning_rate
         # Save best model
         if val_loss < best_val_loss:
             best_val_loss = val_loss
-            torch.save(model.state_dict(), os.path.join(checkpoint_dir, "best_model.pth"))
+            torch.save(model.state_dict(), os.path.join(checkpoint_dir, f"best_model_{model_type}.pth"))
 
     print("Finished Training")
 
@@ -100,7 +113,7 @@ def train_model(data_dir, txt_files, batch_size=32, num_epochs=25, learning_rate
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
     plt.legend()
-    plt.savefig(os.path.join(plots_dir, 'loss_plot.png'))
+    plt.savefig(os.path.join(plots_dir, f'loss_plot_{model_type}.png'))
 
     plt.figure()
     plt.plot(epochs, train_accuracies, 'b', label='Training')
@@ -109,11 +122,12 @@ def train_model(data_dir, txt_files, batch_size=32, num_epochs=25, learning_rate
     plt.xlabel('Epochs')
     plt.ylabel('Accuracy')
     plt.legend()
-    plt.savefig(os.path.join(plots_dir, 'accuracy_plot.png'))
+    plt.savefig(os.path.join(plots_dir, f'accuracy_plot_{model_type}.png'))
 
 if __name__ == "__main__":
     txt_files = {
         'train': 'data/train.txt',
         'val': 'data/val.txt'
     }
-    train_model(data_dir, txt_files)
+    # Argument to select model type
+    train_model(data_dir, txt_files, model_type='ResNet34')

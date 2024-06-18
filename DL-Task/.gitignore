@@ -3,3 +3,5 @@ __pycache__/
 data/images/
 data/processed/
 *.zip
+*.out
+*.log

@@ -21,7 +21,7 @@ This project involves designing a convolutional neural network (CNN) that is cap
 Overall, the model is able to learn from the data, improving accuracy and reducing loss. However, there is still a slight overfitting issue that needs to be addressed.
 |Loss|Accuracy|
 |---|---|
-|![alt text](DL-Task-1/results/plots/loss_plot.png)|![alt text](DL-Task-1/results/plots/accuracy_plot.png)|
+|![alt text](DL-Task/results/plots/loss_plot.png)|![alt text](DL-Task/results/plots/accuracy_plot.png)|
 
 And evaluate its performance on images with various channel combinations (such as RGB, RG, GB, R, G, B, etc.) during inference.
 
@@ -34,14 +34,14 @@ And evaluate its performance on images with various channel combinations (such a
 git clone https://github.com/Sherry2580/Deep-Learning-Assignment-II.git
 ```
 ```bash
-cd DL-Assignment-II/DL-Task-1
+cd DL-Assignment-II/DL-Task
 ```
 ```bash
 pip install -r requirements.txt
 ```
 - Download Dataset: [Mini-ImageNet](https://cchsu.info/files/images.zip)
 
-    Run the command below to download the dataset.
+    Run the command below to download and unzip the dataset.
 ```bash
 bash scripts/download_dataset.sh
 ```
@@ -56,24 +56,50 @@ Follow the steps below to prepare the dataset, train the model, and test the mod
 Make sure you have already unzip the `images.zip` to the data folder.
 
 Run `data_preprocessing.py` to preprocess the dataset.
+```bash
+python src/data_preprocessing.py
+```
 
 ### Train The Model (optional)
 We have provided the pre-trained model, you can directly move to the [next step](#test-the-model). 
 
 If you want to train the model, please run `train.py`
+```bash
+python src/train.py
+```
 
 ### Test The Model
-We provide the pre-trained model, if you want to reproduce our experimental results., you have to run the command below in the **./DL-Assignment-II/DL-Task-1** fodler.
+We provide the pre-trained model, if you want to reproduce our experimental results., you have to run the command below in the **./DL-Assignment-II/DL-Task** fodler.
 ```bash
 bash scripts/download_pretrained_weight.sh
 ```
 then you can directly run `test.py` for dataset testing.
+```bash
+python src/test.py
+```
 
 
 # Task 2 : Designing a Two-Layer Network for Image Classification
 
 
-
+## Train
+- 想要訓練此次設計的模型 **ComplexCNN** ，可以在 `./Deep-Learning-Assignment-II/DL-Task`目錄之下，運行
+```bash
+python src/train.py --model_type ComplexCNN
+```
+- 想要訓練 **ResNet34** ，可以在同樣目錄下，運行
+```bash
+python src/train.py --model_type ResNet34
+```
+## Test
+- 如要測試 **ComplexCNN** 模型，同樣在 `./Deep-Learning-Assignment-II/DL-Task`目錄之下，運行
+```bash
+python src/test.py --model_type ComplexCNN
+```
+- 想要測試 **ResNet34** 模型，在相同目錄下，運行
+```bash
+python src/test.py --model_type ResNet34
+```
 
 
 
