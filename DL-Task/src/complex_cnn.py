@@ -43,12 +43,28 @@ class ResidualDenseBlock(nn.Module):
         out = F.relu(out)
         out = self.layer5(out)
         return out * 0.2 + x
+    
+class SpatialAttention(nn.Module):
+    def __init__(self, kernel_size=7):
+        super(SpatialAttention, self).__init__()
+        self.conv = nn.Conv2d(2, 1, kernel_size, padding=(kernel_size - 1) // 2, bias=False)
+        self.sigmoid = nn.Sigmoid()
+
+    def forward(self, x):
+        avg_out = torch.mean(x, dim=1, keepdim=True)
+        max_out, _ = torch.max(x, dim=1, keepdim=True)
+        x = torch.cat([avg_out, max_out], dim=1)
+        x = self.conv(x)
+        return self.sigmoid(x)
+
+
 
 class ComplexCNN(nn.Module):
     def __init__(self, num_classes=50):
         super(ComplexCNN, self).__init__()
         self.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=1)
         self.conv2 = nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1)
+        self.sa = SpatialAttention()
         self.attention = SelfAttention(128)
         self.rrdb = ResidualDenseBlock(128)
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
@@ -56,14 +72,30 @@ class ComplexCNN(nn.Module):
         self.fc2 = nn.Linear(512, num_classes)
 
     def forward(self, x):
-        x = F.relu(self.conv1(x))
-        x = self.pool(F.relu(self.conv2(x)))
-        x = self.attention(x)
-        x = self.rrdb(x)
+        """
+        input image size: (batch_size, 3, 256, 256)
+        """
+        # conv1
+        # (batch_size, 3, 256, 256) -> (batch_size, 64, 256, 256)
+        # pool1
+        # (batch_size, 64, 256, 256) -> (batch_size, 64, 128, 128)
+        x = self.pool(F.relu(self.conv1(x)))  # [64, 128, 128]
+        # conv2
+        # (batch_size, 64, 128, 128) -> (batch_size, 128, 128, 128)
+        # pool2
+        # (batch_size, 128, 128, 128) -> (batch_size, 128, 64, 64)
+        x = self.pool(F.relu(self.conv2(x)))  # [128, 64, 64]
+        # x = self.attention(x) # out of memory
+        x = self.sa(x) * x  # [128, 64, 64]
+        x = self.rrdb(x)  # [128, 64, 64]
+        # Flatten
+        # (batch_size, 128, 64, 64) -> (batch_size, 128 * 64 * 64)
         x = x.view(-1, 128 * 64 * 64)
+        # x = x.reshape(x.shape[0], -1)
         x = F.relu(self.fc1(x))
         x = self.fc2(x)
         return x
+
 
 if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

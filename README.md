@@ -92,7 +92,13 @@ python src/train.py --model_type ComplexCNN
 python src/train.py --model_type ResNet34
 ```
 ## Test
-- 如要測試 **ComplexCNN** 模型，同樣在 `./Deep-Learning-Assignment-II/DL-Task`目錄之下，運行
+We provide the pre-trained model, if you want to reproduce our experimental results., you have to run the command below in the **./DL-Assignment-II/DL-Task** fodler.
+```bash
+bash scripts/download_pretrained_weight.sh
+```
+then you can directly test model with our pretrained weight.
+
+- 如要測試 **ComplexCNN** 模型，在相同目錄下，運行
 ```bash
 python src/test.py --model_type ComplexCNN
 ```

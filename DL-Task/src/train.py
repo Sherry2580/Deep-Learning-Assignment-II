@@ -1,5 +1,6 @@
 import os
 import torch
+import argparse
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
@@ -13,25 +14,22 @@ import matplotlib.pyplot as plt
 data_dir = 'data/processed'
 checkpoint_dir = 'checkpoints'
 results_dir = 'results'
-plots_dir = os.path.join(results_dir, 'plots')
-os.makedirs(checkpoint_dir, exist_ok=True)
-os.makedirs(plots_dir, exist_ok=True)
 
 def train_model(data_dir, txt_files, batch_size=32, num_epochs=25, learning_rate=0.001, model_type='ComplexCNN'):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    print("Start Training...")
+    print(f"Start Training {model_type}...")
 
     # Load datasets with data augmentation
     train_dataset = ImageDataset(txt_file=txt_files['train'], root_dir=data_dir)
     val_dataset = ImageDataset(txt_file=txt_files['val'], root_dir=data_dir)
 
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, drop_last=True)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, drop_last=True)
 
     # Initialize model based on the model_type
-    if model_type == 'ImprovedCNN':     # task 1 model
+    if model_type == 'ImprovedCNN':
         model = ImprovedCNN(num_classes=50).to(device)
-    elif model_type == 'ComplexCNN':    # task 2 model
+    elif model_type == 'ComplexCNN':
         model = ComplexCNN(num_classes=50).to(device)
     elif model_type == 'ResNet34':
         model = resnet34(pretrained=False)
@@ -42,6 +40,12 @@ def train_model(data_dir, txt_files, batch_size=32, num_epochs=25, learning_rate
 
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+
+    # Ensure each model has its own checkpoint and plot directory
+    model_checkpoint_dir = os.path.join(checkpoint_dir, model_type)
+    model_plots_dir = os.path.join(results_dir, 'plots', model_type)
+    os.makedirs(model_checkpoint_dir, exist_ok=True)
+    os.makedirs(model_plots_dir, exist_ok=True)
 
     best_val_loss = float('inf')
     train_losses, val_losses, train_accuracies, val_accuracies = [], [], [], []
@@ -100,7 +104,7 @@ def train_model(data_dir, txt_files, batch_size=32, num_epochs=25, learning_rate
         # Save best model
         if val_loss < best_val_loss:
             best_val_loss = val_loss
-            torch.save(model.state_dict(), os.path.join(checkpoint_dir, f"best_model_{model_type}.pth"))
+            torch.save(model.state_dict(), os.path.join(model_checkpoint_dir, "best_model.pth"))
 
     print("Finished Training")
 
@@ -113,7 +117,7 @@ def train_model(data_dir, txt_files, batch_size=32, num_epochs=25, learning_rate
     plt.xlabel('Epochs')
     plt.ylabel('Loss')
     plt.legend()
-    plt.savefig(os.path.join(plots_dir, f'loss_plot_{model_type}.png'))
+    plt.savefig(os.path.join(model_plots_dir, 'loss_plot.png'))
 
     plt.figure()
     plt.plot(epochs, train_accuracies, 'b', label='Training')
@@ -122,12 +126,17 @@ def train_model(data_dir, txt_files, batch_size=32, num_epochs=25, learning_rate
     plt.xlabel('Epochs')
     plt.ylabel('Accuracy')
     plt.legend()
-    plt.savefig(os.path.join(plots_dir, f'accuracy_plot_{model_type}.png'))
+    plt.savefig(os.path.join(model_plots_dir, 'accuracy_plot.png'))
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Train a model.')
+    parser.add_argument('--model_type', type=str, required=True, help='The model type to train (ImprovedCNN, ComplexCNN, ResNet34).')
+    args = parser.parse_args()
+
     txt_files = {
         'train': 'data/train.txt',
         'val': 'data/val.txt'
     }
-    # Argument to select model type
-    train_model(data_dir, txt_files, model_type='ResNet34')
+    # New argument to select model type
+    train_model(data_dir, txt_files, model_type=args.model_type)
+
