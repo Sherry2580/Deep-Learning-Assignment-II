@@ -19,7 +19,7 @@ This project involves designing a convolutional neural network (CNN) that is cap
 
 ## Result
 Overall, the model is able to learn from the data, improving accuracy and reducing loss. However, there is still a slight overfitting issue that needs to be addressed.
-|Loss|Accuracy|
+|Loss|Accuracy (%)|
 |---|---|
 |![alt text](DL-Task/results/plots/ImprovedCNN/loss_plot.png)|![alt text](DL-Task/results/plots/ImprovedCNN/accuracy_plot.png)|
 
@@ -27,7 +27,7 @@ And evaluate its performance on images with various channel combinations (such a
 
 | Combination | RGB   | RG    | GB    | R     | G     | B     |
 | ----------- | ----- | ----- | ----- | ----- | ----- | ----- |
-| Accuracy    | 35.11 | 19.11 | 13.78 | 25.78 | 25.33 | 22.0 |
+| Accuracy (%)   | 35.11 | 19.11 | 13.78 | 25.78 | 25.33 | 22.0 |
 
 ## Setup
 ```bash
