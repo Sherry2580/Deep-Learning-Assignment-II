@@ -2,6 +2,9 @@ __pycache__/
 *.pth
 data/images/
 data/processed/
+data/test.txt
+data/train.txt
+data/val.txt
 *.zip
 *.out
 *.log

@@ -21,7 +21,7 @@ This project involves designing a convolutional neural network (CNN) that is cap
 Overall, the model is able to learn from the data, improving accuracy and reducing loss. However, there is still a slight overfitting issue that needs to be addressed.
 |Loss|Accuracy|
 |---|---|
-|![alt text](DL-Task/results/plots/loss_plot.png)|![alt text](DL-Task/results/plots/accuracy_plot.png)|
+|![alt text](DL-Task/results/plots/ImprovedCNN/loss_plot.png)|![alt text](DL-Task/results/plots/ImprovedCNN/accuracy_plot.png)|
 
 And evaluate its performance on images with various channel combinations (such as RGB, RG, GB, R, G, B, etc.) during inference.
 
@@ -92,7 +92,7 @@ python src/train.py --model_type ComplexCNN
 python src/train.py --model_type ResNet34
 ```
 ## Test
-We provide the pre-trained model, if you want to reproduce our experimental results., you have to run the command below in the **./DL-Assignment-II/DL-Task** fodler.
+We provide the pre-trained model, if you want to reproduce our experimental results., you have to run the command below in the `./DL-Assignment-II/DL-Task` fodler.
 ```bash
 bash scripts/download_pretrained_weight.sh
 ```
