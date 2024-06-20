@@ -17,7 +17,7 @@ data_dir = 'data/processed'
 checkpoint_dir = 'checkpoints'
 results_dir = 'results'
 
-def train_model(data_dir, txt_files, batch_size=64, num_epochs=25, learning_rate=0.001, model_type='ComplexCNN'):
+def train_model(data_dir, txt_files, batch_size=64, num_epochs=25, learning_rate=0.001, model_type='ComplexCNN', pretrained_weights=None):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Start Training {model_type}...")
 
@@ -39,7 +39,11 @@ def train_model(data_dir, txt_files, batch_size=64, num_epochs=25, learning_rate
         model = model.to(device)
     else:
         raise ValueError(f"Unknown model type: {model_type}")
-    
+
+    # Load pretrained weights if provided
+    if pretrained_weights is not None:
+        model.load_state_dict(torch.load(pretrained_weights))
+
     print(f"Device: {device}")
     summary(model, (3, 256, 256))
 
@@ -136,6 +140,7 @@ def train_model(data_dir, txt_files, batch_size=64, num_epochs=25, learning_rate
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Train a model.')
     parser.add_argument('--model_type', type=str, required=True, help='The model type to train (ImprovedCNN, ComplexCNN, ResNet34).')
+    parser.add_argument('--pretrained_weights', type=str, help='Path to the pretrained weights file.')
     args = parser.parse_args()
 
     txt_files = {
@@ -143,5 +148,5 @@ if __name__ == "__main__":
         'val': 'data/val.txt'
     }
     # New argument to select model type
-    train_model(data_dir, txt_files, model_type=args.model_type)
+    train_model(data_dir, txt_files, model_type=args.model_type, pretrained_weights=args.pretrained_weights)
 

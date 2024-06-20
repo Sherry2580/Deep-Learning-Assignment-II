@@ -6,7 +6,7 @@ WEIGHT_FILE1=./checkpoints/pretrained_weight_ImprovedCNN.pth
 weight_url1="https://ncku365-my.sharepoint.com/:u:/g/personal/p76121233_ncku_edu_tw/EbjHC6UT2NpKojo477DQx3MBtgO1lrg9qwxJcFMIAYaUTA?e=AJvv2B&download=1"
 
 WEIGHT_FILE2=./checkpoints/pretrained_weight_ComplexCNN.pth
-weight_url2="&download=1"
+weight_url2="https://ncku365-my.sharepoint.com/:u:/g/personal/p76121233_ncku_edu_tw/EWuq50MelqhNsEOGeWYAzmcB5McLslm1Ywc3sRdDn1IYFA?e=bIOKGd&download=1"
 
 WEIGHT_FILE3=./checkpoints/pretrained_weight_ResNet34.pth
 weight_url3="https://ncku365-my.sharepoint.com/:u:/g/personal/p76121233_ncku_edu_tw/ETBh2VTeTr1IqfsczyUwLyUBZZ4u3mOKy85y3bwO1SjYmQ?e=G8cq5I&download=1"

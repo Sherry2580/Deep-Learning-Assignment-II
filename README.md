@@ -81,8 +81,40 @@ python src/test.py
 
 # Task 2 : Designing a Two-Layer Network for Image Classification
 
+## Overview
+Design a (2-4)-layer CNN, Transformer, or RNN network that achieves 90% of ResNet34's performance on ImageNet-mini.
 
-## Train
+## Method
+
+
+
+## Result
+
+| Model       | Accuracy (%) | 
+|-------------|--------------|
+| ComplexCNN  | 58.667       |
+| ResNet34    | 67.778       |
+
+### ComplexCNN
+
+| Accuracy                                             | Loss                                             |
+|------------------------------------------------------|--------------------------------------------------|
+| ![ComplexCNN Accuracy](DL-Task/results/plots/ComplexCNN/accuracy_plot.png) | ![ComplexCNN Loss](DL-Task/results/plots/ComplexCNN/loss_plot.png) |
+
+### ResNet34
+
+| Accuracy                                             | Loss                                             |
+|------------------------------------------------------|--------------------------------------------------|
+| ![ResNet34 Accuracy](DL-Task/results/plots/ResNet34/accuracy_plot.png) | ![ResNet34 Loss](DL-Task/results/plots/ResNet34/loss_plot.png) |
+
+### Analysis
+
+The results indicate that...
+
+
+## Usage
+Make sure that you have already finish [Setup](#setup) and [Preprocess The Dataset](#preprocess-the-dataset).
+### Train The Model (optional)
 - 想要訓練此次設計的模型 **ComplexCNN** ，可以在 `./Deep-Learning-Assignment-II/DL-Task`目錄之下，運行
 ```bash
 python src/train.py --model_type ComplexCNN
@@ -91,7 +123,7 @@ python src/train.py --model_type ComplexCNN
 ```bash
 python src/train.py --model_type ResNet34
 ```
-## Test
+### Test The Model
 We provide the pre-trained model, if you want to reproduce our experimental results., you have to run the command below in the `./DL-Assignment-II/DL-Task` fodler.
 ```bash
 bash scripts/download_pretrained_weight.sh
