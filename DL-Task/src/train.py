@@ -9,13 +9,15 @@ from dataset import ImageDataset
 from model import ImprovedCNN
 from complex_cnn import ComplexCNN
 import matplotlib.pyplot as plt
+from tqdm import tqdm
+from torchsummary import summary
 
 # Define paths
 data_dir = 'data/processed'
 checkpoint_dir = 'checkpoints'
 results_dir = 'results'
 
-def train_model(data_dir, txt_files, batch_size=32, num_epochs=25, learning_rate=0.001, model_type='ComplexCNN'):
+def train_model(data_dir, txt_files, batch_size=64, num_epochs=25, learning_rate=0.001, model_type='ComplexCNN'):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Start Training {model_type}...")
 
@@ -23,8 +25,8 @@ def train_model(data_dir, txt_files, batch_size=32, num_epochs=25, learning_rate
     train_dataset = ImageDataset(txt_file=txt_files['train'], root_dir=data_dir)
     val_dataset = ImageDataset(txt_file=txt_files['val'], root_dir=data_dir)
 
-    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, drop_last=True)
-    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, drop_last=True)
+    train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True, drop_last=True, num_workers=4)
+    val_loader = DataLoader(val_dataset, batch_size=batch_size, shuffle=False, drop_last=True, num_workers=4)
 
     # Initialize model based on the model_type
     if model_type == 'ImprovedCNN':
@@ -37,6 +39,9 @@ def train_model(data_dir, txt_files, batch_size=32, num_epochs=25, learning_rate
         model = model.to(device)
     else:
         raise ValueError(f"Unknown model type: {model_type}")
+    
+    print(f"Device: {device}")
+    summary(model, (3, 256, 256))
 
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=learning_rate)
@@ -57,7 +62,7 @@ def train_model(data_dir, txt_files, batch_size=32, num_epochs=25, learning_rate
         total_loss = 0.0
         correct = 0
         total = 0
-        for i, (inputs, labels) in enumerate(train_loader):
+        for i, (inputs, labels) in enumerate(tqdm(train_loader)):
             inputs, labels = inputs.to(device), labels.to(device)
             optimizer.zero_grad()
             outputs = model(inputs)

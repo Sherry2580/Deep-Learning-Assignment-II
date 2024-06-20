@@ -68,8 +68,10 @@ class ComplexCNN(nn.Module):
         self.attention = SelfAttention(128)
         self.rrdb = ResidualDenseBlock(128)
         self.pool = nn.MaxPool2d(kernel_size=2, stride=2, padding=0)
-        self.fc1 = nn.Linear(128 * 64 * 64, 512)
+        self.fc1 = nn.Linear(128 * 1 * 1, 512)
         self.fc2 = nn.Linear(512, num_classes)
+        self.dropout = nn.Dropout(0.4)
+        self.global_avg_pool = nn.AdaptiveAvgPool2d((1, 1))
 
     def forward(self, x):
         """
@@ -88,9 +90,15 @@ class ComplexCNN(nn.Module):
         # x = self.attention(x) # out of memory
         x = self.sa(x) * x  # [128, 64, 64]
         x = self.rrdb(x)  # [128, 64, 64]
+        # dropout
+        x = self.dropout(x)
+        # global average pooling
+        # (batch_size, 128, 64, 64) -> (batch_size, 128, 1, 1)
+        x = self.global_avg_pool(x)
         # Flatten
-        # (batch_size, 128, 64, 64) -> (batch_size, 128 * 64 * 64)
-        x = x.view(-1, 128 * 64 * 64)
+        # (batch_size, 128, 1, 1) -> (batch_size, 128 * 1 * 1)
+        x = x.view(-1, 128 * 1 * 1)
+
         # x = x.reshape(x.shape[0], -1)
         x = F.relu(self.fc1(x))
         x = self.fc2(x)
