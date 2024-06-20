@@ -78,15 +78,10 @@ then you can directly run `test.py` for dataset testing.
 python src/test.py
 ```
 
-
 # Task 2 : Designing a Two-Layer Network for Image Classification
 
 ## Overview
-Design a (2-4)-layer CNN, Transformer, or RNN network that achieves 90% of ResNet34's performance on ImageNet-mini.
-
-## Method
-
-
+The objective is to design a (2-4)-layer convolutional neural network (CNN), Transformer, or recurrent neural network (RNN) that achieves 90% of the performance of ResNet34 on the ImageNet-mini dataset.
 
 ## Result
 
@@ -109,8 +104,7 @@ Design a (2-4)-layer CNN, Transformer, or RNN network that achieves 90% of ResNe
 
 ### Analysis
 
-The results indicate that...
-
+The results indicate that the performance of the designed two-layer network (ComplexCNN) was evaluated against ResNet34. Despite showing promising results, the ComplexCNN marginally fell short of achieving 90% of ResNet34's performance on ImageNet-mini. The experimental results indicate that with further refinements, the designed model has the potential to reach and even surpass the target benchmark.
 
 ## Usage
 Make sure that you have already finish [Setup](#setup) and [Preprocess The Dataset](#preprocess-the-dataset).
